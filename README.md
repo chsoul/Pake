@@ -269,17 +269,17 @@ Pake's development can not be without these Hackers. They contributed a lot of c
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/m1911star">
-                    <img src="https://avatars.githubusercontent.com/u/4948120?v=4" width="90;" alt="m1911star"/>
-                    <br />
-                    <sub><b>Horus</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/chsoul">
                     <img src="https://avatars.githubusercontent.com/u/175590999?v=4" width="90;" alt="chsoul"/>
                     <br />
                     <sub><b>CHSoul</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/m1911star">
+                    <img src="https://avatars.githubusercontent.com/u/4948120?v=4" width="90;" alt="m1911star"/>
+                    <br />
+                    <sub><b>Horus</b></sub>
                 </a>
             </td>
             <td align="center">
