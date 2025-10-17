@@ -254,6 +254,13 @@ Pake の開発はこれらのハッカーたちなしにはあり得ませんで
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/chsoul">
+                    <img src="https://avatars.githubusercontent.com/u/175590999?v=4" width="90;" alt="chsoul"/>
+                    <br />
+                    <sub><b>CHSoul</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/YangguangZhou">
                     <img src="https://avatars.githubusercontent.com/u/61733195?v=4" width="90;" alt="YangguangZhou"/>
                     <br />
@@ -265,13 +272,6 @@ Pake の開発はこれらのハッカーたちなしにはあり得ませんで
                     <img src="https://avatars.githubusercontent.com/u/7900765?v=4" width="90;" alt="AielloChan"/>
                     <br />
                     <sub><b>Aiello</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/chsoul">
-                    <img src="https://avatars.githubusercontent.com/u/175590999?v=4" width="90;" alt="chsoul"/>
-                    <br />
-                    <sub><b>CHSoul</b></sub>
                 </a>
             </td>
             <td align="center">
