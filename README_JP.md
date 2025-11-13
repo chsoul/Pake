@@ -407,6 +407,13 @@ Pake の開発はこれらのハッカーたちなしにはあり得ませんで
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/claude">
+                    <img src="https://avatars.githubusercontent.com/u/81847?v=4" width="90;" alt="claude"/>
+                    <br />
+                    <sub><b>Claude</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/turkyden">
                     <img src="https://avatars.githubusercontent.com/u/24560160?v=4" width="90;" alt="turkyden"/>
                     <br />

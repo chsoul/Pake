@@ -23,7 +23,7 @@ import sharp from 'sharp';
 import * as psl from 'psl';
 
 var name = "pake-cli";
-var version = "3.5.1";
+var version = "3.5.2";
 var description = "🤱🏻 Turn any webpage into a desktop app with one command. 🤱🏻 一键打包网页生成轻量桌面应用。";
 var engines = {
 	node: ">=18.0.0"
@@ -730,7 +730,8 @@ class BaseBuilder {
             : undefined;
     }
     getInstallTimeout() {
-        return process.platform === 'win32' ? 600000 : 300000;
+        // Windows needs more time due to native compilation and antivirus scanning
+        return process.platform === 'win32' ? 900000 : 600000;
     }
     getBuildTimeout() {
         return 900000;
@@ -786,25 +787,54 @@ class BaseBuilder {
         const rustProjectDir = path.join(tauriSrcPath, '.cargo');
         const projectConf = path.join(rustProjectDir, 'config.toml');
         await fsExtra.ensureDir(rustProjectDir);
-        // 智能检测可用的包管理器
+        // Detect available package manager
         const packageManager = await this.detectPackageManager();
-        const registryOption = isChina
-            ? ' --registry=https://registry.npmmirror.com'
-            : '';
-        // 根据包管理器类型设置依赖冲突解决选项
+        const registryOption = ' --registry=https://registry.npmmirror.com';
         const peerDepsOption = packageManager === 'npm' ? ' --legacy-peer-deps' : '';
         const timeout = this.getInstallTimeout();
         const buildEnv = this.getBuildEnvironment();
-        if (isChina) {
-            logger.info(`✺ Located in China, using ${packageManager}/rsProxy CN mirror.`);
-            const projectCnConf = path.join(tauriSrcPath, 'rust_proxy.toml');
-            await fsExtra.copy(projectCnConf, projectConf);
-            await shellExec(`cd "${npmDirectory}" && ${packageManager} install${registryOption}${peerDepsOption}`, timeout, buildEnv);
+        // Show helpful message for first-time users
+        if (!tauriTargetPathExists) {
+            logger.info(process.platform === 'win32'
+                ? '✺ First-time setup may take 10-15 minutes on Windows (compiling dependencies)...'
+                : '✺ First-time setup may take 5-10 minutes (installing dependencies)...');
         }
-        else {
-            await shellExec(`cd "${npmDirectory}" && ${packageManager} install${peerDepsOption}`, timeout, buildEnv);
+        let usedMirror = isChina;
+        try {
+            if (isChina) {
+                logger.info(`✺ Located in China, using ${packageManager}/rsProxy CN mirror.`);
+                const projectCnConf = path.join(tauriSrcPath, 'rust_proxy.toml');
+                await fsExtra.copy(projectCnConf, projectConf);
+                await shellExec(`cd "${npmDirectory}" && ${packageManager} install${registryOption}${peerDepsOption}`, timeout, buildEnv);
+            }
+            else {
+                await shellExec(`cd "${npmDirectory}" && ${packageManager} install${peerDepsOption}`, timeout, buildEnv);
+            }
+            spinner.succeed(chalk.green('Package installed!'));
         }
-        spinner.succeed(chalk.green('Package installed!'));
+        catch (error) {
+            // If installation times out and we haven't tried the mirror yet, retry with mirror
+            if (error.message?.includes('timed out') && !usedMirror) {
+                spinner.fail(chalk.yellow('Installation timed out, retrying with CN mirror...'));
+                logger.info('✺ Retrying installation with CN mirror for better speed...');
+                const retrySpinner = getSpinner('Retrying installation...');
+                usedMirror = true;
+                try {
+                    const projectCnConf = path.join(tauriSrcPath, 'rust_proxy.toml');
+                    await fsExtra.copy(projectCnConf, projectConf);
+                    await shellExec(`cd "${npmDirectory}" && ${packageManager} install${registryOption}${peerDepsOption}`, timeout, buildEnv);
+                    retrySpinner.succeed(chalk.green('Package installed with CN mirror!'));
+                }
+                catch (retryError) {
+                    retrySpinner.fail(chalk.red('Installation failed'));
+                    throw retryError;
+                }
+            }
+            else {
+                spinner.fail(chalk.red('Installation failed'));
+                throw error;
+            }
+        }
         if (!tauriTargetPathExists) {
             logger.warn('✼ The first packaging may be slow, please be patient and wait, it will be faster afterwards.');
         }
